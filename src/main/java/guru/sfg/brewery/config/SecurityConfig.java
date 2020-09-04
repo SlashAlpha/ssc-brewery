@@ -1,6 +1,7 @@
 package guru.sfg.brewery.config;
 
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
+import guru.sfg.brewery.security.RestUrlAuthFilter;
 import guru.sfg.brewery.security.SFGPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(restHeaderAuthFilter(authenticationManager()),
                 UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();
+        http.addFilterBefore(restUrlAuthFilter(authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class)
+        ;
+
 
         http.authorizeRequests(authorize -> {
             authorize.antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
@@ -77,13 +82,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
+    public RestUrlAuthFilter restUrlAuthFilter(AuthenticationManager authenticationManager) {
+        RestUrlAuthFilter filter = new RestUrlAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+        return filter;
+    }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
 //                .password("{SSHA}xi2gA2H7CzFoKIDu39i/TNCbVIga8oa9yH2fCA==")
-                .password("{bcrypt}$2a$15$UjmxbkhkdJp0vg8zf73z9.Yn3BYIxSCOCGeCwN.AlqMZByGLWauTa")
+                .password("{bcrypt}$2a$10$0R287cjB6GvjXuWsR2ME5eggnrW6sY8UrnE4L3oUbTP4HaufSb2S2")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")

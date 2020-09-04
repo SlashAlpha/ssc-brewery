@@ -17,7 +17,7 @@ public class SFGPasswordEncoderFactories {
     public static PasswordEncoder createDelegatingPasswordEncoder() {
         String encodingId = "bcrypt";
         Map<String, PasswordEncoder> encoders = new HashMap();
-        encoders.put(encodingId, new BCryptPasswordEncoder(15));
+        encoders.put(encodingId, new BCryptPasswordEncoder(10));
         encoders.put("ldap", new LdapShaPasswordEncoder());
         encoders.put("noop", NoOpPasswordEncoder.getInstance());
         encoders.put("sha256", new StandardPasswordEncoder());
